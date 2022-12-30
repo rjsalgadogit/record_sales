@@ -1,0 +1,96 @@
+﻿.calendar {
+	font-size: .9rem;
+}
+
+	.calendar table {
+		table-layout: fixed;
+		border-collapse: separate;
+		border-spacing: 0;
+		border-radius: 4px;
+		width: 100%;
+		/*border: 1px solid #ddd;*/
+		border-top: 1px solid #ddd;
+		border-left: 1px solid #ddd;
+	}
+
+		.calendar table th {
+			text-align: center;
+			border-bottom: 1px solid #ddd;
+			border-right: 1px solid #ddd;
+			font-weight: 500;
+		}
+
+		.calendar table td {
+			position: relative;
+			vertical-align: top;
+			border-bottom: 1px solid #ddd;
+			border-right: 1px solid #ddd;
+		}
+
+			.calendar table td .day-field-wrapper {
+				position: absolute;
+				left: 0;
+				top: 5px;
+				width: 100%;
+				/*pointer-events: none;*/
+			}
+
+		.calendar table .events-wrapper {
+			display: flex;
+			flex-wrap: wrap;
+			width: calc(100% + 3px);
+			height: calc(100% + 3px);
+			margin-left: -1px;
+		}
+
+		.calendar table td .day-field-wrapper, .calendar table td .day-field-wrapper .day-field {
+			display: flex;
+			-webkit-box-pack: center;
+			justify-content: center;
+		}
+
+		.calendar table.month td {
+			padding-top: 30px;
+			height: 100px;
+		}
+
+		.calendar table td .day-field-wrapper .day-field {
+			width: 20px;
+			height: 20px;
+			-webkit-box-align: center;
+			align-items: center;
+			border-radius: 50%;
+			font-size: .7rem;
+			/*font-weight: 700;*/
+		}
+
+		.calendar table td:hover {
+			background: #fbfbfb;
+		}
+
+	.calendar .calendar-tools {
+		display: flex;
+		-webkit-box-pack: justify;
+		justify-content: space-between;
+		margin-bottom: 20px;
+	}
+
+table {
+	display: table;
+	text-indent: initial;
+}
+
+tbody, td, tfoot, th, thead, tr {
+	border: 0 solid;
+	border-color: inherit;
+}
+
+thead {
+	display: table-header-group;
+	vertical-align: middle;
+}
+
+tr {
+	display: table-row;
+	vertical-align: inherit;
+}

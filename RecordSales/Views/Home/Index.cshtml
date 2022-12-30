@@ -1,0 +1,131 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<link href="~/css/calendar-table.css" rel="stylesheet" />
+
+<div class="row no-gutters" style="padding: 0">
+    <div class="col-md" style="text-align: left; color: #007bff">
+        <h4 id="CalendarTitle">@ViewBag.MonthYear</h4>
+    </div>
+
+    <div class="col-md" style="text-align: right">
+        
+        <!-- navigation button -->
+        <nav aria-label="Page Navigation">
+            <ul class="pagination justify-content-end">
+                <li class="page-item"><a class="page-link" href="#" onclick="prevMonth()"><</a></li>
+                <li class="page-item"><a class="page-link" href="#" onclick="nextMonth()">></a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- calendar -->
+<div class="mb-1">
+    <div class="calendar">
+        <table class="month" id="tbl-calendar">
+            <thead>
+                <tr>
+                    <th>Sun</th>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                    <th>Sat</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+<!-- popup -->
+<partial name="DayModal" />
+
+<script>
+    $(document).ready(function () {
+        getTableData('tbl-calendar');
+        console.log('currentYear: ', currentYear);
+        console.log('currentMonth: ', currentMonth);
+    });
+
+    let currentYear = @ViewBag.YearInt;
+    let currentMonth = @ViewBag.MonthInt;
+
+    function getTableData(tableId) {        
+
+        $('#' + tableId).DataTable({
+            paging: false,
+            ordering: false,
+            serverSide: true,
+            info: false,
+            bFilter: false,
+            responsive: true,
+
+            ajax: {
+                url: '/Home/GetCalendar?',
+                type: 'POST',
+                dataType: 'json',
+                data: function (d) {
+                    d.year = currentYear;
+                    d.month = currentMonth;
+                },
+                dataSrc: function (data) {
+
+                    $('#CalendarTitle').html(data.Collection.MonthYear);
+                    return data.Collection.Weeks;
+                }
+            },
+            order: [[0, 'asc']],
+            columns: [
+                { data: 'SundayDay' },
+                { data: 'MondayDay' },
+                { data: 'TuesdayDay' },
+                { data: 'WednesdayDay' },
+                { data: 'ThursdayDay' },
+                { data: 'FridayDay' },
+                { data: 'SaturdayDay' },
+            ],
+            columnDefs: [
+                {
+                    targets: [0, 1, 2, 3, 4, 5, 6],
+                    render: function (data, type, row, meta) {
+                        return generateCellHtml(data > 0 ? data : '');
+                    }
+                }
+            ]
+        });
+    }
+
+    function generateCellHtml(data) {
+        let onclickFunction = data > 0 ? "onclick=\"openPopup();\"" : ""
+
+        return "<div class='day-field-wrapper' " + onclickFunction + ">" +
+            "<div class='day-field'>" + data + "</div>" +
+            "</div>" +
+            "<div class='events-wrapper' " + onclickFunction + "></div>";
+    }
+
+    function openPopup() {
+        $('#modal-popup').modal('show');
+        //GotoControllerAsync('/Home/DayModal', 'POST', null, false, 'html', function (response) {
+
+        //});
+    }
+
+    function prevMonth() {
+        let min = 1;
+
+        currentMonth = currentMonth > 1 ? currentMonth - 1 : currentMonth;
+        $('#tbl-calendar').DataTable().ajax.reload();
+    }
+
+    function nextMonth() {
+        let max = 12;
+
+        currentMonth = currentMonth < 12 ? currentMonth + 1 : currentMonth;
+        $('#tbl-calendar').DataTable().ajax.reload();
+    }
+</script>
