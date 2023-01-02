@@ -4,7 +4,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" style="color: #007bff">@($"{Model.MonthText}. {Model.Day} - {Model.DayText}")</h5>
+                <h5 class="modal-title" style="color: #007bff">@($"{Model.DayText} - {Model.MonthText}. {Model.Day}")</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -16,9 +16,8 @@
                         <div class="col-md-4 form-control" style="border: 0">
                             Sales :
                         </div>
-
                         <div class="col-md">
-                            <input type="number" class="form-control" id="txt-sales" />
+                            <input type="number" class="form-control" onkeypress="onchangeSales()" onkeyup="onchangeSales()" id="txt-sales" />
                         </div>
                     </div>
 
@@ -27,10 +26,17 @@
             </div>
 
             <div class="modal-footer">
-                <span style="float: left; font-size: 16px; font-weight: 700; color: #007bff">$ <span id="total-sales"></span></span>
+                <div style="width: 100%">
+                    <span style="float: left; font-size: 18px; font-weight: 700; color: #6c757d">
+                        Total : Php
+                        <span style="font-size: 20px; color: #007bff" id="total-sales"></span>
+                    </span>
 
-                <button type="button" class="btn btn-primary" style="width: 80px">Save</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="width: 80px">Close</button>
+                    <span style="float: right">
+                        <button type="button" class="btn btn-primary" style="width: 80px" onclick="onclickSave()">Save</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="width: 80px">Close</button>
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -40,4 +46,18 @@
     $(document).ready(function () {
         $('#total-sales').html($('#txt-sales').val());
     });
+
+    function onchangeSales() {
+        $('#total-sales').html(convertToDecimalText($('#txt-sales').val()));
+    }
+
+    function onclickSave() {
+        let obj = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        obj.BasedSales = $('#txt-sales').val();
+        obj.TotalSales = $('#total-sales').html();
+
+        GotoControllerAsync('/Home/SaveData', 'POST', obj, false, 'json', function (response) {
+
+        });
+    }
 </script>

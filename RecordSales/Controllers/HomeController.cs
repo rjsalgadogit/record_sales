@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using RecordSales.DBModels.StoredProcedures;
 using RecordSales.Models;
 using RecordSales.Models.Enums;
 using RecordSales.Services.Interfaces;
@@ -16,16 +17,19 @@ namespace RecordSales.Controllers
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
-        private ICalendarService _calendarService;
+        private readonly ICalendarService _calendarService;
+        private readonly ICashFlowService _cashFlowService;
 
-		public HomeController(ILogger<HomeController> logger
-            , ICalendarService calendarService)
-		{
-			_logger = logger;
+        public HomeController(ILogger<HomeController> logger
+            , ICalendarService calendarService
+            , ICashFlowService cashFlowService)
+        {
+            _logger = logger;
             _calendarService = calendarService;
+            _cashFlowService = cashFlowService;
         }
 
-		public IActionResult Index()
+        public IActionResult Index()
 		{            
             ViewBag.MonthInt = DateTime.Now.Month;
             ViewBag.YearInt = DateTime.Now.Year;
@@ -52,6 +56,20 @@ namespace RecordSales.Controllers
             viewModel.MonthText = today.ToString("MMM");
 
             return PartialView(viewModel);
+        }
+
+        public async Task<IActionResult> SaveData(DayModel viewModel)
+        {
+            await _cashFlowService.UpdateCashFlow(new UpdateCashFlow
+            {
+                Id = $"{viewModel.Year}-{viewModel.Month}-{viewModel.Day}",
+                TransactionTypeId = 1,
+                Amount = viewModel.BasedSales,
+                Description = "Benta ng Shop",
+                User = "system"
+            });
+
+            return Json("");
         }
 
         public async Task<string> GetCalendar(int year, int month)
