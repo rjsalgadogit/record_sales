@@ -42,7 +42,9 @@
 
 
 <!-- popup -->
-<partial name="DayModal" />
+<div id="modal-container">
+    @*<partial name="DayModal" />*@
+</div>
 
 <script>
     $(document).ready(function () {
@@ -100,19 +102,25 @@
     }
 
     function generateCellHtml(data) {
-        let onclickFunction = data > 0 ? "onclick=\"openPopup();\"" : ""
+        let onclickFunction = data > 0 ? "onclick=\"openPopup(" + data + ");\"" : ""
 
         return "<div class='day-field-wrapper' " + onclickFunction + ">" +
             "<div class='day-field'>" + data + "</div>" +
             "</div>" +
-            "<div class='events-wrapper' " + onclickFunction + "></div>";
+            "<div class='events-wrapper' " + onclickFunction + " onload=\"onloadSales();\"></div>";
     }
 
-    function openPopup() {
-        $('#modal-popup').modal('show');
-        //GotoControllerAsync('/Home/DayModal', 'POST', null, false, 'html', function (response) {
+    function openPopup(day) {       
+        let obj = {
+            Year: currentYear,
+            Month: currentMonth,
+            Day: day
+        };
 
-        //});
+        GotoControllerAsync('/Home/DayModal', 'POST', obj, false, 'html', function (response) {
+            $('#modal-container').html(response);
+            $('#modal-popup').modal('show');
+        });
     }
 
     function prevMonth() {
@@ -127,5 +135,9 @@
 
         currentMonth = currentMonth < 12 ? currentMonth + 1 : currentMonth;
         $('#tbl-calendar').DataTable().ajax.reload();
+    }
+
+    function onloadSales() {
+        console.log('onloadSales')
     }
 </script>
