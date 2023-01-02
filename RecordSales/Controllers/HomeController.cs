@@ -36,26 +36,20 @@ namespace RecordSales.Controllers
             ViewBag.MonthYear = $"{DateTime.Now.ToString("MMMM")} {DateTime.Now.ToString("yyyy")}";
 
             return View();
-		}
+		}		
 
-		public IActionResult Privacy()
-		{
-			return View();
-		}
-
-		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-		public IActionResult Error()
-		{
-			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-		}
-
-        public IActionResult DayModal(DayModel viewModel)
+        public async Task<IActionResult> _DayModal(DayModel viewModel)
         {
             var today = new DateTime(viewModel.Year, viewModel.Month, viewModel.Day);
             viewModel.DayText = today.ToString("dddd");
             viewModel.MonthText = today.ToString("MMM");
 
-            return PartialView(viewModel);
+            return PartialView(await Task.FromResult(viewModel));
+        }
+
+        public async Task<IActionResult> _AdditionalItem(AdditionaltemModel viewModel)
+        {
+            return PartialView(await Task.FromResult(viewModel));
         }
 
         public async Task<IActionResult> SaveData(DayModel viewModel)
@@ -70,7 +64,7 @@ namespace RecordSales.Controllers
             });
 
             return Json("");
-        }
+        }        
 
         public async Task<string> GetCalendar(int year, int month)
         {
@@ -88,5 +82,20 @@ namespace RecordSales.Controllers
 
             return JsonConvert.SerializeObject(result);
         }
+
+        #region Default Methods
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        #endregion
     }
 }

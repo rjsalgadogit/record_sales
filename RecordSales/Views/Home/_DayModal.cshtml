@@ -12,23 +12,43 @@
 
             <div class="modal-body">
                 <div class="container">
-                    <div class="row mb-3" style="width: 70%">
-                        <div class="col-md-4 form-control" style="border: 0">
-                            Sales :
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-control" style="border: 0">Total Sales : </div>
                         </div>
-                        <div class="col-md">
-                            <input type="number" class="form-control" onkeypress="onchangeSales()" onkeyup="onchangeSales()" id="txt-sales" />
+                        <div class="col-md-4">
+
+                            <input type="number" 
+                                class="form-control"
+                                onkeypress="onchangeSales()" 
+                                onkeyup="onchangeSales()" 
+                                placeholder="Amount" 
+                                id="txt-sales" />
                         </div>
                     </div>
 
+                    <hr />
+                    <div class="row mb-3">
+                        <div class="col-md">       
+                            <button class="button" style="float: right" onclick="addExpensesItem()">(-) Add Expenses</button>
+                        </div>
+                    </div>
                     <span id="expenses-container"></span>
+
+                    <hr />
+                    <div class="row mb-3">
+                        <div class="col-md">
+                            <button class="button" style="float: right" onclick="addCashItem()">(+) Additional Cash</button>
+                        </div>
+                    </div>
+                    <span id="additional-cash-container"></span>
                 </div>
             </div>
 
             <div class="modal-footer">
                 <div style="width: 100%">
-                    <span style="float: left; font-size: 18px; font-weight: 700; color: #6c757d">
-                        Total : Php
+                    <span style="float: left; font-size: 18px; font-weight: 600; color: #6c757d">
+                        Overall Sales : Php
                         <span style="font-size: 20px; color: #007bff" id="total-sales"></span>
                     </span>
 
@@ -58,6 +78,18 @@
 
         GotoControllerAsync('/Home/SaveData', 'POST', obj, false, 'json', function (response) {
 
+        });
+    }
+
+    function addExpensesItem() {
+        GotoControllerAsync('/Home/_AdditionalItem', 'POST', { IsExpenses: true }, false, 'html', function (response) {
+            $('#expenses-container').append(response);
+        });
+    }
+
+    function addCashItem() {
+        GotoControllerAsync('/Home/_AdditionalItem', 'POST', { IsExpenses: false }, false, 'html', function (response) {
+            $('#additional-cash-container').append(response);
         });
     }
 </script>

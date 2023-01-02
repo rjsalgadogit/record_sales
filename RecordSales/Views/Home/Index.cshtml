@@ -117,7 +117,7 @@
             Day: day
         };
 
-        GotoControllerAsync('/Home/DayModal', 'POST', obj, false, 'html', function (response) {
+        GotoControllerAsync('/Home/_DayModal', 'POST', obj, false, 'html', function (response) {
             $('#modal-container').html(response);
             $('#modal-popup').modal('show');
         });
