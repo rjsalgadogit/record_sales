@@ -13,10 +13,10 @@
             <div class="modal-body">
                 <div class="container">
                     <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-control" style="border: 0">Total Sales : </div>
+                        <div class="col-md-3 form-control" style="border: 0; font-weight: 600">
+                            Total Sales :
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
 
                             <input type="number" 
                                 class="form-control"
@@ -29,19 +29,23 @@
 
                     <hr />
                     <div class="row mb-3">
-                        <div class="col-md">       
-                            <button class="button" style="float: right" onclick="addExpensesItem()">(-) Add Expenses</button>
+                        <div class="col-md form-control" style="border: 0; font-weight: 600">
+                            Expenses :
                         </div>
                     </div>
-                    <span id="expenses-container"></span>
+                    <span id="expenses-container">
+                        <partial name="_AdditionalItem" model="null" />
+                    </span>
 
                     <hr />
                     <div class="row mb-3">
-                        <div class="col-md">
-                            <button class="button" style="float: right" onclick="addCashItem()">(+) Additional Cash</button>
+                        <div class="col-md form-control" style="border: 0; font-weight: 600">
+                            Additional Cash :
                         </div>
                     </div>
-                    <span id="additional-cash-container"></span>
+                    <span id="additional-cash-container">
+                        <partial name="_AdditionalItem" model="null" />
+                    </span>
                 </div>
             </div>
 
@@ -81,7 +85,7 @@
         });
     }
 
-    function addExpensesItem() {
+    function addExpenseItem() {
         GotoControllerAsync('/Home/_AdditionalItem', 'POST', { IsExpenses: true }, false, 'html', function (response) {
             $('#expenses-container').append(response);
         });

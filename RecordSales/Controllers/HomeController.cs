@@ -47,7 +47,7 @@ namespace RecordSales.Controllers
             return PartialView(await Task.FromResult(viewModel));
         }
 
-        public async Task<IActionResult> _AdditionalItem(AdditionaltemModel viewModel)
+        public async Task<IActionResult> _AdditionalItem(DayModel viewModel)
         {
             return PartialView(await Task.FromResult(viewModel));
         }

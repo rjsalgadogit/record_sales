@@ -1,10 +1,14 @@
-﻿@model AdditionaltemModel
+﻿@model DayModel
 
 <div class="row mb-2">
-    <div class="col-md-4" style="border: 0">
+    <div class="col-md-3" style="border: 0">
         <input type="number" class="form-control" placeholder="Amount" />
     </div>
     <div class="col-md">
-        <input type="text" class="form-control" placeholder="Description" />
+        <input type="text" class="form-control" placeholder="Description" />        
+    </div>
+
+    <div class="col-md-2">
+        <button class="btn btn-outline-success" onclick="addExpenseItem();">Add More</button>
     </div>
 </div>

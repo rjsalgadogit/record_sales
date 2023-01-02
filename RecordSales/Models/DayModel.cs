@@ -17,5 +17,7 @@
         public decimal BasedSales { get; set; }
 
         public decimal TotalSales { get; set; }
+
+        public bool IsExpenses { get; set; }
     }
 }
