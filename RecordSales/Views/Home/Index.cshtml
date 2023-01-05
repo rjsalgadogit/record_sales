@@ -49,8 +49,6 @@
 <script>
     $(document).ready(function () {
         getTableData('tbl-calendar');
-        console.log('currentYear: ', currentYear);
-        console.log('currentMonth: ', currentMonth);
     });
 
     let currentYear = @ViewBag.YearInt;
@@ -101,13 +99,27 @@
         });
     }
 
-    function generateCellHtml(data) {
-        let onclickFunction = data > 0 ? "onclick=\"openPopup(" + data + ");\"" : ""
+    function generateCellHtml(day) {        
+        let obj = {
+            year: currentYear,
+            month: currentMonth,
+            day: day
+        };
 
+        // get total sales value on the background
+        GotoControllerAsync('/Home/GenerateCellHtml', 'POST', obj, false, 'html', function (response) {
+            if (response !== 'null')
+                $('#sale-content-' + day).html("Php. &nbsp; <b>" + response + "</b>");
+        });
+
+        // append initial html
+        let onclickFunction = day > 0 ? "onclick=\"openPopup(" + day + ");\"" : "";
         return "<div class='day-field-wrapper' " + onclickFunction + ">" +
-            "<div class='day-field'>" + data + "</div>" +
+            "<div class='day-field'>" + day + "</div>" +
             "</div>" +
-            "<div class='events-wrapper' " + onclickFunction + " onload=\"onloadSales();\"></div>";
+            "<div class='events-wrapper' " + onclickFunction + ">" +
+            "<div class='events-container' id='sale-content-" + day + "'></div>" +
+            "</div>";
     }
 
     function openPopup(day) {       

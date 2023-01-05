@@ -6,6 +6,8 @@ namespace RecordSales.Services.Interfaces
 {
     public interface ICashFlowService
     {
-        public Task<JsonResultModel> UpdateCashFlow(UpdateCashFlow updateCashFlow);
+        public Task<JsonResultModel> UpdateCashFlowAsync(UpdateCashFlow updateCashFlow);
+
+        Task<DayModel> GetSalesAsync(GetSales getSales);
     }
 }

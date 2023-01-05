@@ -36,11 +36,22 @@
 			}
 
 		.calendar table .events-wrapper {
-			display: flex;
+			/*display: flex;*/
+			position: relative;
 			flex-wrap: wrap;
 			width: calc(100% + 3px);
 			height: calc(100% + 3px);
 			margin-left: -1px;
+		}
+
+		.calendar table td .events-wrapper {
+			font-size: .9rem;
+		}
+
+		.calendar table .events-wrapper .events-container {
+			position: absolute;
+			bottom: 2px;
+			left: 3px;
 		}
 
 		.calendar table td .day-field-wrapper, .calendar table td .day-field-wrapper .day-field {

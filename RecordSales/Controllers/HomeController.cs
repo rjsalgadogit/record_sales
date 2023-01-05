@@ -54,7 +54,7 @@ namespace RecordSales.Controllers
 
         public async Task<IActionResult> SaveData(DayModel viewModel)
         {
-            await _cashFlowService.UpdateCashFlow(new UpdateCashFlow
+            await _cashFlowService.UpdateCashFlowAsync(new UpdateCashFlow
             {
                 Id = $"{viewModel.Year}-{viewModel.Month}-{viewModel.Day}",
                 TransactionTypeId = 1,
@@ -65,6 +65,16 @@ namespace RecordSales.Controllers
 
             return Json("");
         }        
+
+        public async Task<IActionResult> GenerateCellHtml(int year, int month, int day)
+        {
+            var model = await _cashFlowService.GetSalesAsync(new GetSales { Id = $"{year}-{month}-{day}" });
+
+            if (model.TotalSales > 0)
+                return Json(model.TotalSales);
+
+            return Json(null);
+        }
 
         public async Task<string> GetCalendar(int year, int month)
         {
