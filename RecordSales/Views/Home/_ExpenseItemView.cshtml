@@ -1,0 +1,27 @@
+﻿@model CashFlowModel
+
+<div class="row mb-2">
+    <div class="col-md-3" style="border: 0">
+        <input type="number"
+               class="form-control"
+               placeholder="Amount"
+               value="@Model.Amount"
+               id="expense-amount-@Model.Id-@Model.NewId" />
+    </div>
+
+    <div class="col-md">
+        <input type="text"
+               class="form-control"
+               placeholder="Description"
+               value="@Model.Description"
+               id="expense-description-@Model.Id-@Model.NewId" />
+    </div>
+
+    <div class="col-md-2">
+        <button type="button"
+                class="btn btn-outline-danger"
+                onclick="deleteItem(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model)).ToString());" id="btn-delete-@Model.Id-@Model.NewId">
+            Delete
+        </button>
+    </div>
+</div>

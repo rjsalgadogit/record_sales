@@ -53,6 +53,8 @@
 
     let currentYear = @ViewBag.YearInt;
     let currentMonth = @ViewBag.MonthInt;
+    let expenses = null;
+    let additionals = null;
 
     function getTableData(tableId) {        
 
@@ -152,4 +154,116 @@
     function onloadSales() {
         console.log('onloadSales')
     }
+
+    //--- modal starts here ---------------
+    function onchangeSales() {
+        $('#total-sales').html(convertToDecimalText($('#Amount').val()));
+    }
+
+    function deleteItem(e) {
+        let isDelete = confirm('Are you sure you want to delete?');
+        if (isDelete) {
+
+        }
+    }
+
+    function addItem(containerId) {
+        let maxNewId = getMaxNewId(containerId == 'expenses-container');
+        let viewItem = containerId == 'expenses-container' ? '_ExpenseItemView' : '_AdditionalItemView';
+        let obj = {
+            IsExpenses: containerId == 'expenses-container',
+            NewId: maxNewId + 1
+        };
+
+        GotoControllerAsync('/Home/' + viewItem, 'POST', obj, false, 'html', function (response) {
+            $('#' + containerId).append(response);
+            pushNewData(containerId == 'expenses-container', maxNewId + 1);
+        });
+    }
+
+    function addCashItem() {
+        GotoControllerAsync('/Home/_AdditionalItem', 'POST', { IsExpenses: false }, false, 'html', function (response) {
+            $('#additional-cash-container').append(response);
+        });
+    }
+
+    function getMaxNewId(isExpenses) {
+        let ids = null;
+
+        ids = isExpenses 
+            ? expenses != null ? expenses.map(e => { return e.NewId; }) : [0]   //-- if null then set to empty array
+            : additionals != null ? additionals.map(e => { return e.NewId; }) : [0];    //-- if null then set to empty array
+
+        return Math.max(...ids) == '-Infinity' ? 0 : Math.max(...ids);
+    }
+
+    function pushNewData(isExpenses, newMaxId) {
+        if (isExpenses) {
+
+            expenses = expenses != null ? expenses : [];    //-- if null then set to empty array
+            expenses.push({
+                NewId: newMaxId
+            });
+        }
+        else {
+            additionals = additionals != null ? additionals : [];   //-- if null then set to empty array
+            additionals.push({
+                NewId: newMaxId
+            });
+        }
+    }
+
+    function processDataList() {
+        let newExpList = [];
+        let newAddList = [];
+
+        //--- update expenses list ----------------
+        expenses.forEach((dataItem) => {
+            let amountId = null;
+            let descriptionId = null;
+
+            if (dataItem.NewId > 0) {
+                amountId = 'expense-amount-0-' + dataItem.NewId;
+                descriptionId = 'expense-description-0-' + dataItem.NewId;
+            }
+            else {
+                amountId = 'expense-amount-' + dataItem.Id + '-0';
+                descriptionId = 'expense-description-' + dataItem.Id + '-0';
+            }
+
+            newExpList.push({
+                NewId: dataItem.NewId,
+                Id: dataItem.Id,
+                Amount: $('#' + amountId).val(),
+                Description: $('#' + descriptionId).val(),
+                TransactionType: 2
+            });
+        });
+
+        //--- update additional list ----------------
+        additionals.forEach((dataItem) => {
+            let amountId = null;
+            let descriptionId = null;
+
+            if (dataItem.NewId > 0) {
+                amountId = 'additional-amount-0-' + dataItem.NewId;
+                descriptionId = 'additional-description-0-' + dataItem.NewId;
+            }
+            else {
+                amountId = 'additional-amount-' + dataItem.Id + '-0';
+                descriptionId = 'additional-description-' + dataItem.Id + '-0';
+            }
+
+            newAddList.push({
+                NewId: dataItem.NewId,
+                Id: dataItem.Id,
+                Amount: $('#' + amountId).val(),
+                Description: $('#' + descriptionId).val(),
+                TransactionType: 3
+            });
+        });
+
+        return { Expenses: newExpList, Additionals: newAddList };
+    }
+    //--- modal ends here -----------------
 </script>

@@ -40,6 +40,46 @@ async function ProcessAsync(url, type, obj, includeAntiforgeToken, returnType) {
 	});
 }
 
+function validateForm(formId) {
+	let isValid = $('#' + formId)[0].checkValidity();
+	return isValid;
+}
+
+function submitForm(formId, link, objData, callback) {
+
+	var formData = $('#' + formId).serializeArray();
+	var datasource = {};
+	$(formData).each(function (index, obj) {
+
+		datasource[obj.name] = obj.value;
+	});	
+
+	if (objData != null) {
+		datasource.Expenses = objData.Expenses;
+		datasource.Additionals = objData.Additionals;
+	}
+
+	console.log(datasource);
+
+	//$.ajax({
+	//	type: 'POST',
+	//	url: link,
+	//	dataType: 'json',
+	//	data: datasource,
+	//	success: function (response) {
+
+	//		if (callback != null && typeof callback == 'function')
+	//			callback(response);
+	//	}
+	//});
+
+	GotoControllerAsync(link, 'POST', datasource, false, 'json', function (response) {
+
+		if (callback != null && typeof callback == 'function')
+			callback(response);
+	});
+}
+
 function convertToDecimalText(n) {
 	let parts = n.toString().split(".");
 

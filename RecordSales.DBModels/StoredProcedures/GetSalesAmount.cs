@@ -6,10 +6,10 @@ using System.Text;
 
 namespace RecordSales.DBModels.StoredProcedures
 {
-    public class GetSales : ModelBaseSqlStoredProcedure
+    public class GetSalesAmount : ModelBaseSqlStoredProcedure
     {
         [Param]
-        public string Id { get; set; }
+        public string Code { get; set; }
 
         [Read]
         public decimal TotalSales { get; set; }

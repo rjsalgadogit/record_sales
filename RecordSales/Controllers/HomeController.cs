@@ -8,6 +8,7 @@ using RecordSales.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -41,34 +42,77 @@ namespace RecordSales.Controllers
         public async Task<IActionResult> _DayModal(DayModel viewModel)
         {
             var today = new DateTime(viewModel.Year, viewModel.Month, viewModel.Day);
+            var result = await _cashFlowService.GetCashFlowAsync(new GetCashFlow { Code = $"{viewModel.Year}-{viewModel.Month}-{viewModel.Day}" });
+
+            //for display
+            if (result != null)
+            {
+                viewModel = result;                
+            }
+
+            viewModel.Day = today.Day;
             viewModel.DayText = today.ToString("dddd");
             viewModel.MonthText = today.ToString("MMM");
 
             return PartialView(await Task.FromResult(viewModel));
         }
 
-        public async Task<IActionResult> _AdditionalItem(DayModel viewModel)
+        public async Task<IActionResult> _ExpenseItemView(CashFlowModel viewModel)
+        {
+            return PartialView(await Task.FromResult(viewModel));
+        }
+
+        public async Task<IActionResult> _AdditionalItemView(CashFlowModel viewModel)
         {
             return PartialView(await Task.FromResult(viewModel));
         }
 
         public async Task<IActionResult> SaveData(DayModel viewModel)
         {
-            await _cashFlowService.UpdateCashFlowAsync(new UpdateCashFlow
+            var code = $"{viewModel.Year}-{viewModel.Month}-{viewModel.Day}";
+
+            var result = await _cashFlowService.UpdateCashFlowAsync(new UpdateCashFlow
             {
-                Id = $"{viewModel.Year}-{viewModel.Month}-{viewModel.Day}",
-                TransactionTypeId = 1,
-                Amount = viewModel.BasedSales,
+                Id = viewModel.Id,
+                Code = code,
+                TransactionTypeId = (int)TransactionEnum.Sales,
+                Amount = viewModel.Amount,
                 Description = "Benta ng Shop",
                 User = "system"
             });
 
-            return Json("");
-        }        
+            foreach (var item in viewModel.Expenses)
+            {
+                var expresult = await _cashFlowService.UpdateCashFlowAsync(new UpdateCashFlow
+                {
+                    Id = item.Id,
+                    Code = code,
+                    TransactionTypeId = (int)TransactionEnum.Expenses,
+                    Amount = item.Amount * -1,
+                    Description = item.Description,
+                    User = "system"
+                });
+            }
+
+            foreach (var item in viewModel.Additionals)
+            {
+                var addresult = await _cashFlowService.UpdateCashFlowAsync(new UpdateCashFlow
+                {
+                    Id = item.Id,
+                    Code = code,
+                    TransactionTypeId = (int)TransactionEnum.Additional,
+                    Amount = item.Amount,
+                    Description = item.Description,
+                    User = "system"
+                });
+            }
+
+            return Json(result);
+        }
 
         public async Task<IActionResult> GenerateCellHtml(int year, int month, int day)
         {
-            var model = await _cashFlowService.GetSalesAsync(new GetSales { Id = $"{year}-{month}-{day}" });
+            var model = await _cashFlowService.GetSalesAmountAsync(new GetSalesAmount { Code = $"{year}-{month}-{day}" });
 
             if (model.TotalSales > 0)
                 return Json(model.TotalSales);

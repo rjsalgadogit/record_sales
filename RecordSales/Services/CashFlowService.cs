@@ -13,13 +13,16 @@ namespace RecordSales.Services
     public class CashFlowService : ICashFlowService
     {
         private readonly ISequelService<UpdateCashFlow> _updateCashFlow;
-        private readonly ISequelService<GetSales> _getSales;
+        private readonly ISequelService<GetSalesAmount> _getSalesAmount;
+        private readonly ISequelService<GetCashFlow> _getCashFlow;
 
         public CashFlowService(ISequelService<UpdateCashFlow> updateCashFlow
-            , ISequelService<GetSales> getSales)
+            , ISequelService<GetSalesAmount> getSalesAmount
+            , ISequelService<GetCashFlow> getCashFlow)
         {
             _updateCashFlow = updateCashFlow;
-            _getSales = getSales;
+            _getSalesAmount = getSalesAmount;
+            _getCashFlow = getCashFlow;
         }
 
         public async Task<JsonResultModel> UpdateCashFlowAsync(UpdateCashFlow updateCashFlow)
@@ -43,11 +46,35 @@ namespace RecordSales.Services
             return result;
         }
 
-        public async Task<DayModel> GetSalesAsync(GetSales getSales)
+        public async Task<DayModel> GetSalesAmountAsync(GetSalesAmount getSales)
         {
-            var result = await _getSales.GetSPResultsFromSequelClientAsync(getSales);
+            var result = await _getSalesAmount.GetSPResultsFromSequelClientAsync(getSales);
 
             return result.Select(i => i.ToViewModel()).FirstOrDefault();
+        }
+
+        public async Task<DayModel> GetCashFlowAsync(GetCashFlow getCashFlow)
+        {
+            var result = await _getCashFlow.GetSPResultsFromSequelClientAsync(getCashFlow);
+
+            var transaction1 = result.Where(x => x.TransactionTypeId == 1).ToList();    //sales
+            var transaction2 = result.Where(x => x.TransactionTypeId == 2).ToList();    //expenses
+            var transaction3 = result.Where(x => x.TransactionTypeId == 3).ToList();    //additional
+
+            if (result.Count > 0 || result.Any())
+            {
+                return new DayModel
+                {
+                    Id = transaction1.FirstOrDefault().Id,
+                    Code = transaction1.FirstOrDefault().Code,
+                    Amount = transaction1.FirstOrDefault().Amount,
+                    TransactionTypeId = 1,
+                    Expenses = transaction2.Select(i => i.ToViewModel()).ToList(),
+                    Additionals = transaction3.Select(i => i.ToViewModel()).ToList()
+                };
+            }
+
+            return null;
         }
     }
 }

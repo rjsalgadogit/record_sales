@@ -17,7 +17,8 @@ namespace RecordSales.Registration
             #region SP
 
             services.AddTransient(typeof(ISequelService<UpdateCashFlow>), typeof(SequelService<UpdateCashFlow>));
-            services.AddTransient(typeof(ISequelService<GetSales>), typeof(SequelService<GetSales>));
+            services.AddTransient(typeof(ISequelService<GetSalesAmount>), typeof(SequelService<GetSalesAmount>));
+            services.AddTransient(typeof(ISequelService<GetCashFlow>), typeof(SequelService<GetCashFlow>));
 
             #endregion
 

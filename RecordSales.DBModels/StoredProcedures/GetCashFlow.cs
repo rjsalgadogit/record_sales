@@ -6,27 +6,23 @@ using System.Text;
 
 namespace RecordSales.DBModels.StoredProcedures
 {
-    public class UpdateCashFlow : ModelBaseSqlStoredProcedure
+    public class GetCashFlow : ModelBaseSqlStoredProcedure
     {
-        [Param]
-        public int Id { get; set; }
-
-        [Param]
         public string Code { get; set; }
 
-        [Param]
+        [Read]
+        public int Id { get; set; }
+
+        [Read]
         public int TransactionTypeId { get; set; }
 
-        [Param]
+        [Read]
         public decimal Amount { get; set; }
 
-        [Param]
+        [Read]
         public string Description { get; set; }
 
-        [Param]
+        [Read]
         public string Notes { get; set; }
-
-        [Param]
-        public string User { get; set; }
     }
 }
