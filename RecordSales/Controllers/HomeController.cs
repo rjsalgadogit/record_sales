@@ -107,6 +107,16 @@ namespace RecordSales.Controllers
                 });
             }
 
+            foreach (var item in viewModel.ExpensesToBeDeleted)
+            {
+                await _cashFlowService.DeleteCashFlowAsync(new DeleteCashFlow { Id = item.Id });
+            }
+
+            foreach (var item in viewModel.AdditionalsToBeDeleted)
+            {
+                await _cashFlowService.DeleteCashFlowAsync(new DeleteCashFlow { Id = item.Id });
+            }
+
             return Json(result);
         }
 
@@ -115,7 +125,7 @@ namespace RecordSales.Controllers
             var model = await _cashFlowService.GetSalesAmountAsync(new GetSalesAmount { Code = $"{year}-{month}-{day}" });
 
             if (model.TotalSales > 0)
-                return Json(model.TotalSales);
+                return Json(model.TotalSalesText);
 
             return Json(null);
         }

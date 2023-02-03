@@ -57,6 +57,8 @@ function submitForm(formId, link, objData, callback) {
 	if (objData != null) {
 		datasource.Expenses = objData.Expenses;
 		datasource.Additionals = objData.Additionals;
+		datasource.ExpensesToBeDeleted = expensesToBeDeleted;
+		datasource.AdditionalsToBeDeleted = additionalsToBeDeleted;
 	}
 
 	console.log(datasource);

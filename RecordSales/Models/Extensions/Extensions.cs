@@ -8,7 +8,8 @@ namespace RecordSales.Models.Extensions
         public static DayModel ToViewModel(this GetSalesAmount model) 
             => new DayModel
             {
-                TotalSales= model.TotalSales
+                TotalSales= model.TotalSales,
+                TotalSalesText = $"{model.TotalSales:n}"
             };
 
         public static CashFlowModel ToViewModel(this GetCashFlow model)

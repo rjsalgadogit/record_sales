@@ -55,6 +55,8 @@
     let currentMonth = @ViewBag.MonthInt;
     let expenses = null;
     let additionals = null;
+    let expensesToBeDeleted = null;
+    let additionalsToBeDeleted = null;
 
     function getTableData(tableId) {        
 
@@ -111,7 +113,7 @@
         // get total sales value on the background
         GotoControllerAsync('/Home/GenerateCellHtml', 'POST', obj, false, 'html', function (response) {
             if (response !== 'null')
-                $('#sale-content-' + day).html("Php. &nbsp; <b>" + response + "</b>");
+                $('#sale-content-' + day).html('Php &nbsp;<b>' + response.replaceAll('"','') + '</b>');
         });
 
         // append initial html
@@ -141,13 +143,17 @@
         let min = 1;
 
         currentMonth = currentMonth > 1 ? currentMonth - 1 : currentMonth;
-        $('#tbl-calendar').DataTable().ajax.reload();
+        refreshTable();
     }
 
     function nextMonth() {
         let max = 12;
 
         currentMonth = currentMonth < 12 ? currentMonth + 1 : currentMonth;
+        refreshTable();
+    }
+
+    function refreshTable() {
         $('#tbl-calendar').DataTable().ajax.reload();
     }
 
@@ -160,10 +166,37 @@
         $('#total-sales').html(convertToDecimalText($('#Amount').val()));
     }
 
-    function deleteItem(e) {
+    function deleteExpenseItem(e, rowItemId) {
         let isDelete = confirm('Are you sure you want to delete?');
-        if (isDelete) {
 
+        if (isDelete) {
+            $('#' + rowItemId).remove();
+            if (e.Id > 0) {
+                expenses.splice(expenses.findIndex(a => a.Id === e.Id), 1);
+                expensesToBeDeleted = expensesToBeDeleted != null ? expensesToBeDeleted : [];
+                expensesToBeDeleted.push({
+                    Id: e.Id
+                });
+            }
+            else
+                expenses.splice(expenses.findIndex(a => a.NewId === e.NewId), 1);
+        }
+    }
+
+    function deleteAdditional(e, rowItemId) {
+        let isDelete = confirm('Are you sure you want to delete?');
+
+        if (isDelete) {
+            $('#' + rowItemId).remove();
+            if (e.Id > 0) {
+                additionals.splice(additionals.findIndex(a => a.Id === e.Id), 1);
+                additionalsToBeDeleted = additionalsToBeDeleted != null ? additionalsToBeDeleted : [];
+                additionalsToBeDeleted.push({
+                    Id: e.Id
+                });
+            }
+            else
+                additionals.splice(additionals.findIndex(a => a.NewId === e.NewId), 1);
         }
     }
 

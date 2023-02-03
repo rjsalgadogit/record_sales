@@ -20,7 +20,6 @@
                                 Sales today :
                             </div>
                             <div class="col-md-3">
-
                                 <input type="number"
                                        asp-for="Amount"
                                        class="form-control"
@@ -71,9 +70,11 @@
                         </span>
                     </div>
 
+                    <input type="hidden" asp-for="Id" />
                     <input type="hidden" asp-for="Year" />
                     <input type="hidden" asp-for="Month" />
                     <input type="hidden" asp-for="Day" />
+                    <input type="hidden" asp-for="TransactionTypeId" />
                 </form>
             </div>
 
@@ -85,8 +86,8 @@
                     </span>
 
                     <span style="float: right">
-                        <button type="button" class="btn btn-primary" style="width: 80px" onclick="onclickSave()">Save</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="width: 80px">Close</button>
+                        <button type="button" class="btn btn-primary" style="width: 80px; margin-right: 5px" onclick="onclickSave()">Save</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="width: 80px">Cancel</button>
                     </span>
                 </div>
             </div>
@@ -98,14 +99,12 @@
     $(document).ready(function () {
         expenses = null;
         additionals = null;
+        expensesToBeDeleted = null;
+        additionalsToBeDeleted = null;
 
         expenses = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Expenses));
         additionals = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Additionals));
-
         $('#total-sales').html($('#Amount').val());
-
-        console.log('expenses: ', expenses);
-        console.log('additionals: ', additionals);
     });
 
     function onclickSave() {
@@ -113,12 +112,11 @@
         if (isValid) {
 
             let dataList = processDataList();
-
             submitForm('formDay', '/Home/SaveData', dataList, function (response) {
-                console.log('save response: ', response);
 
                 if (response.isSuccess) {
                     $('#modal-popup').modal('hide');
+                    refreshTable();
                 }
             });
         }

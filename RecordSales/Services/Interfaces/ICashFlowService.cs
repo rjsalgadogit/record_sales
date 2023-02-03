@@ -12,5 +12,7 @@ namespace RecordSales.Services.Interfaces
         public Task<DayModel> GetSalesAmountAsync(GetSalesAmount getSales);
 
         public Task<DayModel> GetCashFlowAsync(GetCashFlow getCashFlow);
+
+        public Task DeleteCashFlowAsync(DeleteCashFlow deleteCashFlow);
     }
 }

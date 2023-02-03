@@ -1,5 +1,6 @@
 ﻿using RecordSales.DBModels.StoredProcedures;
 using RecordSales.Models;
+using RecordSales.Models.Enums;
 using RecordSales.Models.Extensions;
 using RecordSales.Services.Interfaces;
 using Sequel.Service.Interfaces;
@@ -15,14 +16,17 @@ namespace RecordSales.Services
         private readonly ISequelService<UpdateCashFlow> _updateCashFlow;
         private readonly ISequelService<GetSalesAmount> _getSalesAmount;
         private readonly ISequelService<GetCashFlow> _getCashFlow;
+        private readonly ISequelService<DeleteCashFlow> _deleteCashFlow;
 
         public CashFlowService(ISequelService<UpdateCashFlow> updateCashFlow
             , ISequelService<GetSalesAmount> getSalesAmount
-            , ISequelService<GetCashFlow> getCashFlow)
+            , ISequelService<GetCashFlow> getCashFlow
+            , ISequelService<DeleteCashFlow> deleteCashFlow)
         {
             _updateCashFlow = updateCashFlow;
             _getSalesAmount = getSalesAmount;
             _getCashFlow = getCashFlow;
+            _deleteCashFlow = deleteCashFlow;
         }
 
         public async Task<JsonResultModel> UpdateCashFlowAsync(UpdateCashFlow updateCashFlow)
@@ -68,13 +72,18 @@ namespace RecordSales.Services
                     Id = transaction1.FirstOrDefault().Id,
                     Code = transaction1.FirstOrDefault().Code,
                     Amount = transaction1.FirstOrDefault().Amount,
-                    TransactionTypeId = 1,
+                    TransactionTypeId = (int)TransactionEnum.Sales,
                     Expenses = transaction2.Select(i => i.ToViewModel()).ToList(),
                     Additionals = transaction3.Select(i => i.ToViewModel()).ToList()
                 };
             }
 
             return null;
+        }
+
+        public async Task DeleteCashFlowAsync(DeleteCashFlow deleteCashFlow)
+        {
+            await _deleteCashFlow.PerformSPFromSequelClientAsync(deleteCashFlow);
         }
     }
 }
